@@ -11,44 +11,72 @@ go get github.com/aliyun/aliyun-pai-ab-go-sdk
 ## Usage
 
 ```go
-    // init config
+   package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/aliyun/aliyun-pai-ab-go-sdk/api"
+	"github.com/aliyun/aliyun-pai-ab-go-sdk/experiments"
+	"github.com/aliyun/aliyun-pai-ab-go-sdk/model"
+)
+
+func main() {
+
+	// init config
 	region := "cn-beijing"
 	accessId := os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_ID")
 	accessKey := os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET")
 	config := api.NewConfiguration(region, accessId, accessKey)
 
-    // init client
-	client := NewExperimentClient(config, WithLogger(LoggerFunc(log.Printf)))
+	// init client
+	client, err := experiments.NewExperimentClient(config, experiments.WithLogger(experiments.LoggerFunc(log.Printf)))
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    // set up experiment context
+	// set up experiment context
 	experimentContext := model.ExperimentContext{
 		RequestId: "pvid",
-		Uid:       "156",
+		Uid:       "157",
 		FilterParams: map[string]interface{}{
 			"sex": "male",
 			"age": 35,
 		},
 	}
 
-    // match experiment
+	// match experiment
+	// DefaultProject is project name
 	experimentResult := client.MatchExperiment("DefaultProject", &experimentContext)
 
-    // print experiment info
+	// print experiment info
 	fmt.Println(experimentResult.Info())
-    // print exp id
+	// print exp id
 	fmt.Println(experimentResult.GetExpId())
 
-    // get experiment param value
-	param := experimentResult.GetExperimentParams().GetString("ab_param_name", "not_exist"))
-    if param != "not_exist" {
-    // experiment logic 
-        
+	// get experiment param value
+	param := experimentResult.GetExperimentParams().GetString("ab_param_name", "not_exist")
+	if param != "not_exist" {
+		// experiment logic
 
-    } else {
-    // default logic
+	} else {
+		// default logic
 
-    }
+	}
+}
 
+```
+
+If you call the ABTest service in Alibaba Cloud VPC, you can specify using the VPC to connect to the service.
+```go
+	// init config
+	region := "cn-beijing"
+	accessId := os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_ID")
+	accessKey := os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET")
+	config := api.NewConfiguration(region, accessId, accessKey)
+	config.UseVpc(true)
 ```
 
 ## Version Release Notes 
