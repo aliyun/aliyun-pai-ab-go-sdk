@@ -4,6 +4,8 @@ import (
 	"strconv"
 
 	"github.com/alibabacloud-go/paiabtest-20240119/client"
+	util "github.com/alibabacloud-go/tea-utils/v2/service"
+	"github.com/alibabacloud-go/tea/tea"
 	"github.com/aliyun/aliyun-pai-ab-go-sdk/swagger"
 )
 
@@ -12,7 +14,11 @@ type ProjectApiService service
 func (a *ProjectApiService) ListProjects() ([]*swagger.Project, error) {
 	request := client.ListProjectsRequest{}
 	request.SetAll(true)
-	response, err := a.client.ListProjects(&request)
+	runtime := &util.RuntimeOptions{
+		IgnoreSSL: tea.Bool(true),
+	}
+	headers := make(map[string]*string)
+	response, err := a.client.ListProjectsWithOptions(&request, headers, runtime)
 	var ret []*swagger.Project
 	if err != nil {
 		return ret, err

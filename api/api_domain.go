@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/alibabacloud-go/paiabtest-20240119/client"
+	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/aliyun/aliyun-pai-ab-go-sdk/common"
 	"github.com/aliyun/aliyun-pai-ab-go-sdk/swagger"
@@ -18,7 +19,11 @@ func (a *DomainApiService) ListDomains(projectId int) ([]*swagger.Domain, error)
 	}
 	var ret []*swagger.Domain
 
-	response, err := a.client.ListDomains(&request)
+	runtime := &util.RuntimeOptions{
+		IgnoreSSL: tea.Bool(true),
+	}
+	headers := make(map[string]*string)
+	response, err := a.client.ListDomainsWithOptions(&request, headers, runtime)
 	if err != nil {
 		return nil, err
 	}

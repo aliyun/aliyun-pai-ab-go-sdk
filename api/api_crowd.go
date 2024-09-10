@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/alibabacloud-go/paiabtest-20240119/client"
+	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 )
 
@@ -22,7 +23,11 @@ func (a *CrowdApiService) ListCrowdUsers(crowdId int) (users []string, err error
 		CrowdId: tea.String(strconv.Itoa(crowdId)),
 	}
 
-	response, err := a.client.ListCrowds(&request)
+	runtime := &util.RuntimeOptions{
+		IgnoreSSL: tea.Bool(true),
+	}
+	headers := make(map[string]*string)
+	response, err := a.client.ListCrowdsWithOptions(&request, headers, runtime)
 	if err != nil {
 		return nil, err
 	}

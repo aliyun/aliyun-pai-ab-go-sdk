@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/alibabacloud-go/paiabtest-20240119/client"
+	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/aliyun/aliyun-pai-ab-go-sdk/common"
 	"github.com/aliyun/aliyun-pai-ab-go-sdk/swagger"
@@ -24,7 +25,11 @@ func (a *ExperimentVersionApiService) ListExperimentVersions(expId int) ([]*swag
 		All:          tea.Bool(true),
 		ExperimentId: tea.String(strconv.Itoa(expId)),
 	}
-	response, err := a.client.ListExperimentVersions(&request)
+	runtime := &util.RuntimeOptions{
+		IgnoreSSL: tea.Bool(true),
+	}
+	headers := make(map[string]*string)
+	response, err := a.client.ListExperimentVersionsWithOptions(&request, headers, runtime)
 	if err != nil {
 		return nil, err
 	}

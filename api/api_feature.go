@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/alibabacloud-go/paiabtest-20240119/client"
+	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/aliyun/aliyun-pai-ab-go-sdk/common"
 	"github.com/aliyun/aliyun-pai-ab-go-sdk/swagger"
@@ -24,7 +25,11 @@ func (a *FeatureApiService) ListFeatures(expDomainId int) ([]*swagger.Feature, e
 		All:      tea.Bool(true),
 		DomainId: tea.String(strconv.Itoa(expDomainId)),
 	}
-	resonse, err := a.client.ListFeatures(&request)
+	runtime := &util.RuntimeOptions{
+		IgnoreSSL: tea.Bool(true),
+	}
+	headers := make(map[string]*string)
+	resonse, err := a.client.ListFeaturesWithOptions(&request, headers, runtime)
 	if err != nil {
 		return nil, err
 	}
