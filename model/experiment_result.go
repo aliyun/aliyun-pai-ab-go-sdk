@@ -18,7 +18,13 @@ type ExperimentResult struct {
 
 	experimentVersions []*ExperimentVersion
 
+	domains []*Domain
+
 	experimentParams ExperimentParams
+}
+
+func (r *ExperimentResult) AddDomain(domain *Domain) {
+	r.domains = append(r.domains, domain)
 }
 
 func NewExperimentResult(projectName string, experimentContext *ExperimentContext, project *Project) *ExperimentResult {
@@ -27,6 +33,7 @@ func NewExperimentResult(projectName string, experimentContext *ExperimentContex
 		project:            project,
 		ExperimentContext:  experimentContext,
 		experimentVersions: make([]*ExperimentVersion, 0),
+		domains:            make([]*Domain, 0),
 		experimentParams:   NewExperimentParams(),
 	}
 
@@ -60,6 +67,12 @@ func (r *ExperimentResult) Init() {
 			r.experimentParams.AddParams(experimentVersion.Params())
 		}
 
+	} else {
+		for _, domain := range r.domains {
+			buf.WriteString("_D")
+			buf.WriteString(strconv.Itoa(int(domain.ExpDomainId)))
+		}
+		r.expId = buf.String()
 	}
 }
 

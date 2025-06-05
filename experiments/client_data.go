@@ -88,7 +88,9 @@ func (e *ExperimentClient) LoadExperimentData() {
 			}
 			for _, l := range layers {
 				layer := model.NewLayer(l)
-				domain.AddLayer(layer)
+				if layer.ExpDomainId == domain.ExpDomainId {
+					domain.AddLayer(layer)
+				}
 				project.AddLayer(layer)
 
 				experiments, err := e.APIClient.ExperimentApi.ListExperiments(int(layer.ExpLayerId), common.ExpStatusRunning)
