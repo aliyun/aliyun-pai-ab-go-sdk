@@ -97,6 +97,8 @@ func (e *ExperimentClient) matchDomain(domain *model.Domain, experimentResult *m
 		return
 	}
 
+	experimentResult.AddDomain(domain)
+
 	for _, feature := range domain.Features() {
 		if feature.Match(experimentResult.ExperimentContext) {
 			experimentResult.GetExperimentParams().AddParams(feature.Params())
