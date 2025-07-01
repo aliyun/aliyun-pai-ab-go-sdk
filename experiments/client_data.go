@@ -87,7 +87,12 @@ func (e *ExperimentClient) LoadExperimentData() {
 				continue
 			}
 			for _, l := range layers {
-				layer := model.NewLayer(l)
+				var layer *model.Layer
+				if lay := project.GetLayer(int(l.ExpLayerId)); lay != nil {
+					layer = lay
+				} else {
+					layer = model.NewLayer(l)
+				}
 				if layer.ExpDomainId == domain.ExpDomainId {
 					domain.AddLayer(layer)
 				}
