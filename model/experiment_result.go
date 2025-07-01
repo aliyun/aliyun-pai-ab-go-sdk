@@ -69,8 +69,11 @@ func (r *ExperimentResult) Init() {
 
 	} else {
 		for _, domain := range r.domains {
-			buf.WriteString("_D")
-			buf.WriteString(strconv.Itoa(int(domain.ExpDomainId)))
+			if domain.IsDefaultDomain {
+				buf.WriteString(fmt.Sprintf("_D%d", domain.ExpDomainId))
+			} else {
+				buf.WriteString(fmt.Sprintf("_L%d_D%d", domain.ExpLayerId, domain.ExpDomainId))
+			}
 		}
 		r.expId = buf.String()
 	}
@@ -91,4 +94,46 @@ func (r *ExperimentResult) Info() string {
 	info = append(info, fmt.Sprintf("exp_id=%s", r.expId))
 
 	return strings.Join(info, "\t")
+}
+
+func (r *ExperimentResult) GetExperimentPathByParamName(paramName string) string {
+	var expVersion *ExperimentVersion
+	var paths []string
+	for _, experimentVersion := range r.experimentVersions {
+		if _, ok := experimentVersion.Params()[paramName]; ok {
+			expVersion = experimentVersion
+			break
+		}
+	}
+	if expVersion == nil {
+		return ""
+	}
+
+	paths = append(paths, fmt.Sprintf("EV%d(%s)", expVersion.ExpVersionId, expVersion.ExpVersionName), fmt.Sprintf("E%d(%s)", expVersion.Experiment().ExpId, expVersion.Experiment().ExpName))
+	nextLayerId := expVersion.Experiment().ExpLayerId
+	for {
+
+		layer := r.project.GetLayer(int(nextLayerId))
+		if layer == nil {
+			break
+		}
+
+		domain := r.project.GetDomain(int(layer.ExpDomainId))
+		if domain == nil {
+			break
+		}
+		paths = append(paths, fmt.Sprintf("L%d(%s)", layer.ExpLayerId, layer.LayerName), fmt.Sprintf("D%d(%s)", domain.ExpDomainId, domain.ExpDomainName))
+		if domain.IsDefaultDomain {
+			break
+		}
+
+		nextLayerId = domain.ExpLayerId
+	}
+
+	paths = append(paths, fmt.Sprintf("ER%d(%s)", r.project.ExpProjectId, r.projectName))
+	reversePath := make([]string, 0, len(paths))
+	for i := len(paths) - 1; i >= 0; i-- {
+		reversePath = append(reversePath, paths[i])
+	}
+	return strings.Join(reversePath, "_")
 }

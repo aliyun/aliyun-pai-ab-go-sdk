@@ -26,21 +26,23 @@ func TestMatchExperiment(t *testing.T) {
 
 	experimentContext := model.ExperimentContext{
 		RequestId: "pvid",
-		Uid:       "156",
+		Uid:       "169",
 		FilterParams: map[string]interface{}{
 			"sex": "male",
 			"age": 35,
 		},
 	}
 
-	experimentResult := client.MatchExperiment("DefaultProject", &experimentContext)
+	experimentResult := client.MatchExperiment("test_black_domain_pro", &experimentContext)
 
 	fmt.Println(experimentResult.Info())
 	fmt.Println(experimentResult.GetExpId())
 
-	fmt.Println(experimentResult.GetExperimentParams().GetString("recall_v", "not_exist"))
-	fmt.Println(experimentResult.GetExperimentParams().GetString("rank_v", "not_exist"))
-	fmt.Println(experimentResult.GetExperimentParams().GetString("male_v", "not_exist"))
+	fmt.Println(experimentResult.GetExperimentParams().GetString("recall_param", "not_exist"))
+	fmt.Println(experimentResult.GetExperimentParams().GetString("filter_param", "not_exist"))
+
+	fmt.Println(experimentResult.GetExperimentPathByParamName("recall_param"))
+	fmt.Println(experimentResult.GetExperimentPathByParamName("filter_param"))
 
 }
 

@@ -29,6 +29,12 @@ func (p *Project) AddLayer(layer *Layer) {
 func (p *Project) GetDomains() map[int]*Domain {
 	return p.domainMap
 }
+func (p *Project) GetDomain(domainId int) *Domain {
+	if domain, ok := p.domainMap[domainId]; ok {
+		return domain
+	}
+	return nil
+}
 
 func (p *Project) GetLayer(layerId int) *Layer {
 	if layer, ok := p.layerMap[layerId]; ok {
