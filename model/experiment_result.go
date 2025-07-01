@@ -109,7 +109,7 @@ func (r *ExperimentResult) GetExperimentPathByParamName(paramName string) string
 		return ""
 	}
 
-	paths = append(paths, fmt.Sprintf("EV%d", expVersion.ExpVersionId), fmt.Sprintf("E%d", expVersion.Experiment().ExpId))
+	paths = append(paths, fmt.Sprintf("EV%d(%s)", expVersion.ExpVersionId, expVersion.ExpVersionName), fmt.Sprintf("E%d(%s)", expVersion.Experiment().ExpId, expVersion.Experiment().ExpName))
 	nextLayerId := expVersion.Experiment().ExpLayerId
 	for {
 
@@ -122,7 +122,7 @@ func (r *ExperimentResult) GetExperimentPathByParamName(paramName string) string
 		if domain == nil {
 			break
 		}
-		paths = append(paths, fmt.Sprintf("L%d", layer.ExpLayerId), fmt.Sprintf("D%d", domain.ExpDomainId))
+		paths = append(paths, fmt.Sprintf("L%d(%s)", layer.ExpLayerId, layer.LayerName), fmt.Sprintf("D%d(%s)", domain.ExpDomainId, domain.ExpDomainName))
 		if domain.IsDefaultDomain {
 			break
 		}
@@ -130,7 +130,7 @@ func (r *ExperimentResult) GetExperimentPathByParamName(paramName string) string
 		nextLayerId = domain.ExpLayerId
 	}
 
-	paths = append(paths, fmt.Sprintf("ER%d", r.project.ExpProjectId))
+	paths = append(paths, fmt.Sprintf("ER%d(%s)", r.project.ExpProjectId, r.projectName))
 	reversePath := make([]string, 0, len(paths))
 	for i := len(paths) - 1; i >= 0; i-- {
 		reversePath = append(reversePath, paths[i])
